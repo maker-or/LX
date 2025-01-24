@@ -1,20 +1,12 @@
 'use client';
 
 import { type Message, useChat } from 'ai/react';
-import { Copy, Check, MoveUpRight } from 'lucide-react';
+import { Copy, Check, MoveUpRight,Square } from 'lucide-react';
 import { useAuth } from "@clerk/nextjs";
 import { useEffect, useState, useRef } from "react";
 import { marked } from "marked"; // Importing the marked library
 import { AppSidebar } from "~/components/app-sidebar";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "~/components/ui/breadcrumb";
-import { Separator } from "~/components/ui/separator";
+
 import {
   SidebarInset,
   SidebarProvider,
@@ -80,14 +72,14 @@ export default function Page() {
   };
 
   return (
-    <>
+    <main className="flex h-[100svh] w-[100svw] flex-col items-center justify-center bg-[#f7eee3] text-[#0c0c0c]">
       <SidebarProvider>
         <AppSidebar className="shadow-md" />
         <SidebarInset className="bg-[#f7eee3]">
-          <header className="flex h-16 shrink-0 items-center gap-2 bg-[#f7eee3] border-b border-gray-600">
-            <SidebarTrigger className="ml-8 text-[#0c0c0c]" />
-          </header>
-          <div className="flex h-[100svh] w-full overflow-hidden bg-[#f7eee3] gap-4 p-4">
+          {/* <header className="flex h-6 shrink-0 items-center  bg-[#634828] border-gray-600"> */}
+          <SidebarTrigger className="ml-4 text-[#0c0c0c]" />
+          {/* </header> */}
+          <div className="flex h-full w-full overflow-hidden bg-[#9c713d] gap-4 ">
             <div className="flex flex-col h-full w-full bg-[#f7eee3] overflow-hidden">
               {/* Messages Container */}
               <div className="flex-1 overflow-y-auto px-4 py-6">
@@ -103,7 +95,7 @@ export default function Page() {
                       </div>
                     ) : (
                       <div
-                        className="max-w-xl text-[1.2rem] tracking-tight text-[#0c0c0c] rounded-xl p-4 relative"
+                        className="max-w-2xl text-[1.2rem] tracking-tight text-[#0c0c0c] rounded-xl p-4 relative"
                       >
                         <div dangerouslySetInnerHTML={renderMarkdown(m.content)} /> {/* Render Markdown */}
                         <button
@@ -120,18 +112,14 @@ export default function Page() {
                     )}
                   </div>
                 ))}
-                {isLoading && (
-                  <div className="flex justify-center items-center py-4">
-                    <div className="animate-pulse text-[#0c0c0c]">Creating answers...</div>
-                  </div>
-                )}
+
                 <div ref={messagesEndRef} />
               </div>
 
               {/* Input Bar */}
-              <div className="sticky bottom-0 z-10 p-4 bg-[#f7eee3] border-t border-[#e0d5c8]">
-                <form onSubmit={onSubmit} className="w-full">
-                  <div className="relative flex items-center w-full">
+              <div className="flex sticky bottom-0 z-10 p-5  items-center justify-center border-t border-[#e0d5c8]">
+                <form onSubmit={onSubmit} className="flex w-full items-center justify-center">
+                  <div className="relative flex items-center justify-center bg-[#252525] rounded-full p-1 w-3/4">
                     <textarea
                       ref={textareaRef}
                       placeholder="Type your message..."
@@ -141,7 +129,7 @@ export default function Page() {
                         adjustTextareaHeight();
                       }}
                       onInput={adjustTextareaHeight}
-                      className="flex-grow w-full outline-none rounded-xl bg-[#0c0c0c] py-3 px-4 text-[#f7eee3] resize-none overflow-hidden placeholder-[#f7eee3bb]"
+                      className="flex-grow w-3/4 h-full outline-none items-center justify-center rounded-full bg-[#454444] py-4 px-4 text-[#f7eee3] resize-none overflow-hidden placeholder-[#f7eee3bb]"
                       rows={1}
                     />
                     <button
@@ -149,15 +137,16 @@ export default function Page() {
                       disabled={!input.trim() || isLoading}
                       className="ml-4 p-3 rounded-full bg-[#FF5E00] text-[#f7eee3] font-semibold transition-colors duration-200 hover:bg-[#e05500] disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {isLoading ? 'Creating...' : <MoveUpRight />}
+                      {isLoading ? <Square  />: <MoveUpRight />}
                     </button>
                   </div>
                 </form>
               </div>
+
             </div>
           </div>
         </SidebarInset>
       </SidebarProvider>
-    </>
+    </main>
   );
 }

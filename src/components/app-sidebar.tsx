@@ -5,8 +5,10 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarHeader,
+  SidebarTrigger,
   SidebarMenu,
   SidebarMenuButton,
+  SidebarInset,
   SidebarMenuItem,
   SidebarRail,
 } from "~/components/ui/sidebar";
@@ -38,6 +40,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarGroup>
           <SidebarMenu className="bg-transparent">
           <UserButton/>
+          
+
+
+
+
+
             {data.navMain.map((item) => (
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton asChild>
