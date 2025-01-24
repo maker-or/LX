@@ -29,10 +29,19 @@ const TagInput: React.FC<TagInputProps> = ({ tags, setTags }) => {
 
   return (
     <div>
-      <div className='flex mb-2 mt-6 gap-2'>
+      <input
+        type="text"
+        value={inputValue}
+        onChange={handleChange}
+        onKeyDown={handleKeyDown}
+        placeholder="Type a tag and press space..."
+        className='w-full border-b border-gray-300 bg-inherit text-2xl  text-[#0c0c0c] outline-none mt-8'
+      />
+
+<div className='flex mb-2 mt-6 justify-start gap-4'>
         {tags.map((tag, index) => (
           <div
-            className='bg-blue-600 text-white rounded-md p-4'
+            className='bg-blue-600 text-white rounded-md px-6 py-2'
             key={index}
           >
             {tag}
@@ -45,14 +54,6 @@ const TagInput: React.FC<TagInputProps> = ({ tags, setTags }) => {
           </div>
         ))}
       </div>
-      <input
-        type="text"
-        value={inputValue}
-        onChange={handleChange}
-        onKeyDown={handleKeyDown}
-        placeholder="Type a tag and press space..."
-        className='p-5 mb-4 rounded-md'
-      />
     </div>
   );
 };

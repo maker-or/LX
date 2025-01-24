@@ -16,11 +16,14 @@ const s3Client = new S3Client({
 interface UploadRequest {
   name: string;
   url: string;
-  type: string;
+  // typ: string;
   userId: object;
   year: string;
   branch: string;
   tags: string;
+  subject:string;
+  type:string
+  
 }
 
 const fileUpload = async (file: File, name: string) => {
@@ -67,6 +70,8 @@ export async function POST(req: Request) {
       tags: body.tags,
       year: body.year,
       branch: body.branch,
+      type:body.type,
+      subject:body.subject,
       createdAt: new Date(),
       updatedAt: new Date()
     });

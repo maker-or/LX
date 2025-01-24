@@ -24,7 +24,7 @@ export default function RootLayout({
       <html lang="en" className={`${GeistSans.variable}`}>
         <body>
           <SignedOut>
-            <div className="scroll-behavior: auto; flex h-screen w-screen flex-col items-center justify-center bg-[#0c0c0c] text-white">
+            <div className="scroll-behavior: auto; flex h-screen w-screen flex-col items-center justify-center bg-[#f7eee3] text-white">
               <SignInButton />
             </div>
           </SignedOut>
