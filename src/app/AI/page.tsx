@@ -16,10 +16,11 @@ import {
 export default function Page() {
   const [isLoading, setIsLoading] = useState(false);
   const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
-  const { messages, input, handleInputChange, handleSubmit } = useChat({
+  const { messages, input, handleInputChange, handleSubmit, setInput } = useChat({
     api: '/api/chat',
     onResponse: (response) => {
       setIsLoading(false);
+      resetInputField(); // Reset the input field after the response is received
     },
     onError: (error) => {
       console.error('Error:', error);
@@ -42,7 +43,20 @@ export default function Page() {
   const adjustTextareaHeight = () => {
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+      textareaRef.current.style.height = `${Math.min(
+        textareaRef.current.scrollHeight,
+        200 // Max height in pixels
+      )}px`;
+    }
+  };
+
+  const resetInputField = () => {
+    // Clear the input field
+    setInput('');
+
+    // Reset the height of the textarea
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
     }
   };
 
@@ -72,6 +86,17 @@ export default function Page() {
     } catch (error) {
       console.error('Error submitting form:', error);
       setIsLoading(false);
+    }
+  };
+
+  // Handle textarea keydown events
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault(); // Prevent default behavior (new line)
+      onSubmit(event); // Submit the form
+    } else if (event.key === 'Enter' && event.shiftKey) {
+      // Allow new line when Shift + Enter is pressed
+      adjustTextareaHeight(); // Adjust textarea height dynamically
     }
   };
 
@@ -119,9 +144,15 @@ export default function Page() {
               </div>
 
               {/* Input Bar */}
-              <div className="flex sticky bottom-0 z-10 p-5  items-center justify-center border-t border-[#e0d5c8]">
+              <div className="flex sticky bottom-0 z-10 p-5 items-center justify-center border-t border-[#e0d5c8]">
                 <form onSubmit={onSubmit} className="flex w-full items-center justify-center">
-                  <div className="relative flex items-center justify-center bg-[#252525] rounded-full p-1 w-3/4">
+                  <div
+                    className={`relative flex items-center justify-center bg-[#252525] p-1 w-3/4 ${
+                      textareaRef.current && textareaRef.current.value.split('\n').length > 1
+                        ? 'rounded-lg' // Medium radius for multi-line input
+                        : 'rounded-full' // Full radius for single-line input
+                    }`}
+                  >
                     <textarea
                       ref={textareaRef}
                       placeholder="Type your message..."
@@ -130,13 +161,19 @@ export default function Page() {
                         handleInputChange(e);
                         adjustTextareaHeight();
                       }}
+                      onKeyDown={handleKeyDown} // Handle keydown events
                       onInput={adjustTextareaHeight}
-                      className="flex-grow w-3/4 h-full outline-none items-center justify-center rounded-full bg-[#454444] py-4 px-4 text-[#f7eee3] resize-none overflow-hidden placeholder-[#f7eee3bb]"
+                      className={`flex-grow w-3/4 h-full outline-none items-center justify-center bg-[#454444] py-4 px-4 text-[#f7eee3] resize-none overflow-y-auto placeholder-[#f7eee3bb] ${
+                        textareaRef.current && textareaRef.current.value.split('\n').length > 1
+                          ? 'rounded-lg' // Medium radius for multi-line input
+                          : 'rounded-full' // Full radius for single-line input
+                      }`}
+                      style={{ maxHeight: '200px' }} // Set a max height for the textarea
                       rows={1}
                     />
                     <button
                       type="submit"
-                     
+                      disabled={!input.trim() || isLoading}
                       className="ml-4 p-3 rounded-full bg-[#FF5E00] text-[#f7eee3] font-semibold transition-colors duration-200 hover:bg-[#e05500] disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {isLoading ? <Square /> : <MoveUpRight />}
