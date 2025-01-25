@@ -1,13 +1,8 @@
-import { createGoogleGenerativeAI } from '@ai-sdk/google';
-import { streamText } from "ai";
+import { groq } from '@ai-sdk/groq'; // Ensure this package is installed
+import { generateText, streamText, smoothStream } from 'ai';
 import { Pinecone } from '@pinecone-database/pinecone';
 import { getEmbedding } from '~/utils/embeddings';
 import { type ConvertibleMessage } from '~/utils/types';
-
-
-// import { Ollama } from "@langchain/ollama";
-// import {fetchYouTubeVideos} from'~/app/api/chat/youtube'
-// import { runGeneratedSQLQuery, generateQuery, explainQuery } from '~/app/api/chat/action';
 
 // Define a type for the expected request body structure
 interface RequestBody {
@@ -16,11 +11,12 @@ interface RequestBody {
 
 export async function POST(req: Request): Promise<Response> {
   try {
-    console.log("welcome to ai");
+    console.log('Welcome to AI');
 
     // Parse the request JSON with explicit typing
     const body = await req.json() as RequestBody;
 
+    // Validate the request body
     if (!body.messages || body.messages.length === 0) {
       throw new Error('No messages provided');
     }
@@ -31,98 +27,98 @@ export async function POST(req: Request): Promise<Response> {
     }
 
     const query = lastMessage.content;
-    console.log(query);
+    console.log('Query:', query);
 
-    //  const video:unknown = await fetchYouTubeVideos(query);
-    //   console.log(video)
-
-
-
-
+    // Initialize Pinecone
     const pinecone = new Pinecone({
-      apiKey: process.env.PINECONE_API_KEY ?? "",
-
-
+      apiKey: process.env.PINECONE_API_KEY ?? '',
     });
 
     // Get embeddings for the query
     const queryEmbedding = await getEmbedding(query);
-    console.log("in route ", queryEmbedding);
+    console.log('Query Embedding:', queryEmbedding);
 
-    // Query Pinecone
+    // Query Pinecone for relevant context
     const index = pinecone.index('dwm');
     const queryResponse = await index.namespace('').query({
       vector: queryEmbedding,
       topK: 5,
       includeMetadata: true,
-      //  includeValues:true
     });
 
+    console.log('Pinecone Query Response:', JSON.stringify(queryResponse, null, 2));
 
-    console.log("Pinecone Query Response:", JSON.stringify(queryResponse, null, 2));
-    console.log("*******************")
+    // Validate Pinecone response
+    if (!queryResponse.matches || queryResponse.matches.length === 0) {
+      throw new Error('No relevant context found in Pinecone');
+    }
 
-
+    // Construct context from Pinecone results
     const context = queryResponse.matches
       .map((match) => `Book: ${String(match.metadata?.book ?? 'Unknown')}\nPage: ${String(match.metadata?.page_number ?? 'Unknown')}\nText: ${String(match.metadata?.text ?? '')}`)
       .join('\n\n');
 
+    console.log('Context:', context);
 
+    // Construct the final prompt for Groq
+    const finalPrompt = `
+Context: ${context}
+Question: ${query}
+Please provide a comprehensive and detailed answer to the user's query and cite the book name at the end of the response.
+`;
 
+    console.log('Final Prompt:', finalPrompt);
 
+    // Generate the response using Groq
+    try {
+      const result =  streamText({
+        model: groq('gemma2-9b-it'), // Ensure this model name is valid
+        system: `
+          You are an expert assistant named SphereAI designed to provide accurate, detailed, and structured answers to user queries. Your task is to answer questions based on the provided context. Follow these guidelines:
+      
+          1. **Role**: Act as a knowledgeable and helpful assistant.
+          2. **Task**: Answer user questions clearly and concisely.
+          3. **Output Format**:
+             - Start with a brief summary of the answer.
+             - Use headings and bullet points for clarity.
+             - Provide step-by-step explanations where applicable.
+             - Keep paragraphs short and easy to read.
+          4. **Context Handling**:
+             - Use the provided context to generate answers.
+             - If the context is insufficient, state that you don't have enough information.
+          5. **Tone and Style**:
+             - Use a professional and friendly tone.
+             - Avoid overly technical jargon unless requested.
+          6. **Error Handling**:
+             - If the query is unclear, ask for clarification before answering.
+          7. **Citations**:
+             - Always cite the source of your information at the end of your response, if applicable.
+      
+          Your goal is to ensure the user receives accurate, well-structured, and helpful answers.
+        `,
+        prompt: finalPrompt,
+        experimental_transform: smoothStream(),
+      });
 
-    console.log("Tgiz is contexr", context);
-    console.log("****************");
-
-    const google = createGoogleGenerativeAI({
-      baseURL: 'https://generativelanguage.googleapis.com/v1beta',
-      apiKey: process.env.GEMINI_API_KEY
-    });
-
-    const model = google('models/gemini-1.5-flash', {
-      safetySettings: [
-        { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_NONE' }
-      ],
-    });
-
-
-    // const llm = new Ollama({
-    //   model: "llama3.2", // Default value
-    //   temperature: 0,
-    //   maxRetries: 2,
-    //   // other params...
-    // });
-
-
-    const final_prompt = `
-     Context: ${context} and the question is ${query} Please provide a comprehensive and detailed answer to the user's query and Cite the book name at the end of quries.
-    `;
-
-    console.log("+++++++++++++++++++++++++++++++++++++++++++++");
-    console.log("This is final prompt", final_prompt)
-    console.log("+++++++++++++++++++++++++++++++++++++++++++++");
-    console.log("thisa is qurey", query)
-    console.log("+++++++++++++++++++++++++++++++++++++++++++++");
-    console.log("thisa is contttttt", context)
-
-    const result =  streamText({
-      model: model,
-      system: 'Your job is to genrate the answers to the given question make the answer is clean clear in a strucured format if no context is given the return s0s if no question is provided then return s1s',
-      prompt: final_prompt,
-
-
-    });
-
-    // console.log("This is resukt",result)
-    return result.toDataStreamResponse();
-
+      // Return the response as JSON
+      return result.toDataStreamResponse(); // Ensure this is called correctly
+    } catch (error) {
+      console.error('Error during streamText:', error);
+      return new Response(
+        JSON.stringify({ error: 'An error occurred while generating the response', details: error instanceof Error ? error.message : 'Unknown error' }),
+        {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
+    }
   } catch (error: unknown) {
     console.error('Error in chat route:', error instanceof Error ? error.message : 'Unknown error');
     return new Response(
-      JSON.stringify({ error: 'An error occurred while processing your request' }),
+      JSON.stringify({ error: 'An error occurred while processing your request', details: error instanceof Error ? error.message : 'Unknown error' }),
       {
         status: 500,
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
       }
     );
   }

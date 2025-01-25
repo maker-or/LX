@@ -1,7 +1,7 @@
 'use client';
 
 import { type Message, useChat } from 'ai/react';
-import { Copy, Check, MoveUpRight,Square } from 'lucide-react';
+import { Copy, Check, MoveUpRight, Square } from 'lucide-react';
 import { useAuth } from "@clerk/nextjs";
 import { useEffect, useState, useRef } from "react";
 import { marked } from "marked"; // Importing the marked library
@@ -46,10 +46,14 @@ export default function Page() {
     }
   };
 
-  const copyMessage = (content: string, id: string) => {
-    navigator.clipboard.writeText(content);
-    setCopiedMessageId(id);
-    setTimeout(() => setCopiedMessageId(null), 2000);
+  const copyMessage = async (content: string, id: string) => {
+    try {
+      await navigator.clipboard.writeText(content);
+      setCopiedMessageId(id);
+      setTimeout(() => setCopiedMessageId(null), 2000); // Reset copied state after 2 seconds
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+    }
   };
 
   const renderMarkdown = (content: string) => {
@@ -76,9 +80,7 @@ export default function Page() {
       <SidebarProvider>
         <AppSidebar className="shadow-md" />
         <SidebarInset className="bg-[#f7eee3]">
-          {/* <header className="flex h-6 shrink-0 items-center  bg-[#634828] border-gray-600"> */}
           <SidebarTrigger className="ml-4 text-[#0c0c0c]" />
-          {/* </header> */}
           <div className="flex h-full w-full overflow-hidden bg-[#9c713d] gap-4 ">
             <div className="flex flex-col h-full w-full bg-[#f7eee3] overflow-hidden">
               {/* Messages Container */}
@@ -134,15 +136,14 @@ export default function Page() {
                     />
                     <button
                       type="submit"
-                      disabled={!input.trim() || isLoading}
+                     
                       className="ml-4 p-3 rounded-full bg-[#FF5E00] text-[#f7eee3] font-semibold transition-colors duration-200 hover:bg-[#e05500] disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {isLoading ? <Square  />: <MoveUpRight />}
+                      {isLoading ? <Square /> : <MoveUpRight />}
                     </button>
                   </div>
                 </form>
               </div>
-
             </div>
           </div>
         </SidebarInset>
