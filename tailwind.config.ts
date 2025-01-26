@@ -10,7 +10,9 @@ export default {
   			sans: [
   				'var(--font-geist-sans)',
                     ...fontFamily.sans
-                ]
+                ],
+
+				serif: ['Instrument Serif', 'serif'],
   		},
   		borderRadius: {
   			lg: 'var(--radius)',

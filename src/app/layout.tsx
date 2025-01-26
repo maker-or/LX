@@ -7,6 +7,8 @@ import {
   UserButton,
 } from "@clerk/nextjs";
 
+import Navbar from "~/components/ui/Navbar";
+
 import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
 
@@ -26,9 +28,15 @@ export default function RootLayout({
           <SignedOut>
             <div className="scroll-behavior: auto; flex h-screen w-screen flex-col items-center justify-center bg-[#f7eee3] text-[#0c0c0c]">
               <SignInButton />
-            </div>
+          </div>
           </SignedOut>
-          <SignedIn>{children}</SignedIn>
+          <div className="w-[100svw] h-[100svh] bg-[#191A1A] p-1">
+          <SignedIn>
+            <Navbar />
+            {children}
+            </SignedIn>
+          </div>
+
         </body>
       </html>
     </ClerkProvider>

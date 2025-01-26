@@ -72,7 +72,7 @@ Please provide a comprehensive and detailed answer to the user's query and cite 
     // Generate the response using Groq
     try {
       const result =  streamText({
-        model: groq('gemma2-9b-it'), // Ensure this model name is valid
+        model: groq('llama-3.3-70b-versatile'), // Ensure this model name is valid
         system: `
           You are an expert assistant named SphereAI designed to provide accurate, detailed, and structured answers to user queries. Your task is to answer questions based on the provided context. Follow these guidelines:
       
@@ -101,6 +101,9 @@ Please provide a comprehensive and detailed answer to the user's query and cite 
       });
 
       // Return the response as JSON
+      // console.log("77777777777777777777777777777777777777")
+      // console.log("the result from the chat is ", result.toDataStreamResponse())
+      // console.log("77777777777777777777777777777777777777")
       return result.toDataStreamResponse(); // Ensure this is called correctly
     } catch (error) {
       console.error('Error during streamText:', error);

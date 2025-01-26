@@ -33,7 +33,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     <Sidebar
       variant="floating"
       {...props}
-      className="bg-[#f7eee3] "
+      className="bg-[#f7eee3] h-1/5 "
     >
 
       <SidebarContent className=" bg-[#f7eee3]  border-2 border-[#0c0c0c32] rounded-lg shadow-md">
