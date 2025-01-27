@@ -35,7 +35,7 @@ const TagInput: React.FC<TagInputProps> = ({ tags, setTags }) => {
         onChange={handleChange}
         onKeyDown={handleKeyDown}
         placeholder="Type a tag and press space..."
-        className='w-full border-b border-gray-300 bg-inherit text-2xl  text-[#0c0c0c] outline-none mt-8'
+        className='w-[90%] border-b border-gray-300 bg-inherit text-2xl  text-[#E8E8E6] outline-none mt-8'
       />
 
 <div className='flex mb-2 mt-6 justify-start gap-4'>

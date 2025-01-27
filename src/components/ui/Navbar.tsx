@@ -12,7 +12,7 @@ const Navbar = () => {
   const isActive = (path: string) => pathName.split('/').includes('repo');
 
   return (
-    <nav className="font-serif">
+    <nav className="font-serif  p-2 ">
       <div className="items-center flex">
         <ul className="inline-flex flex-row items-center mx-auto bg-[#1f1f1f] py-2.5 px-1 rounded-full border border-[#f7eee332] text-[#646464] text-[1.2rem] ">
           <li className="px-2">

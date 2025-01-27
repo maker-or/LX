@@ -26,16 +26,15 @@ export default function RootLayout({
       <html lang="en" className={`${GeistSans.variable}`}>
         <body>
           <SignedOut>
-            <div className="scroll-behavior: auto; flex h-screen w-screen flex-col items-center justify-center bg-[#f7eee3] text-[#0c0c0c]">
+            <div className="scroll-behavior: auto; flex h-screen w-screen flex-col items-center justify-center bg-[#191A1A] text-[#0c0c0c]">
               <SignInButton />
           </div>
           </SignedOut>
-          <div className="w-[100svw] h-[100svh] bg-[#191A1A] p-1">
+
           <SignedIn>
-            <Navbar />
             {children}
             </SignedIn>
-          </div>
+
 
         </body>
       </html>

@@ -175,10 +175,10 @@ export default function Page() {
   }
 
   return (
-    <main className="flex h-[100svh] w-[100svw] flex-col items-center justify-center bg-[#191A1A] text-[#0c0c0c]">
+    <main className="flex h-[100svh] w-[100svw] flex-col bg-[#191A1A] items-center justify-center text-[#0c0c0c]">
 
-      <div className="flex h-full w-full overflow-hidden bg-[#191A1A] gap-4 ">
-        <div className="flex flex-col h-full w-full  overflow-hidden">
+      <div className="flex h-full w-2/3  overflow-hidden gap-4 ">
+        <div className="flex flex-col h-full w-full "> 
           {/* Messages Container */}
           <div className="flex-1 overflow-y-auto px-4 py-6">
             {messages.map((m, index) => {
@@ -207,7 +207,7 @@ export default function Page() {
                       <div /> 
                       <button
                         onClick={() => copyMessage(m.content, m.id)}
-                        className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-[#0c0c0c] hover:text-[#FF5E00]"
+                        className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-[#f7eee3] hover:text-[#FF5E00]"
                       >
                         {copiedMessageId === m.id ? (
                           <Check className="h-5 w-5 text-green-400" />
@@ -278,7 +278,7 @@ export default function Page() {
           <div className="flex sticky bottom-0 z-10 items-center p-3 justify-center ">
             <form onSubmit={onSubmit} className="flex w-full items-center justify-center">
               <div
-                className={`relative flex items-center justify-center bg-[#252525] p-1 w-3/4 ${textareaRef.current && textareaRef.current.value.split('\n').length > 1
+                className={`relative flex items-center justify-center bg-[#252525] p-1 border-[1px] border-[#f7eee332] w-3/4 ${textareaRef.current && textareaRef.current.value.split('\n').length > 1
                   ? 'rounded-lg' // Medium radius for multi-line input
                   : 'rounded-full' // Full radius for single-line input
                   }`}

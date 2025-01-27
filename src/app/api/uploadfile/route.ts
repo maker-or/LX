@@ -61,10 +61,10 @@ export async function POST(req: Request) {
     }
     
     const { file, ...body } = extractedData;
-    const fileUrl = await fileUpload(file, file?.name || "default_title");
+    const fileUrl = await fileUpload(file, file.name || "default_title");
 
     const newRepo = await db.insert(repo).values({
-      filename: file.name,
+      filename: body.name,
       fileurl: fileUrl,
       userId: authUserId,
       tags: body.tags,
