@@ -1,5 +1,5 @@
 // components/TagInput.tsx
-import { useState, ChangeEvent, KeyboardEvent } from 'react';
+import { useState, type ChangeEvent, type KeyboardEvent } from 'react';
 
 interface TagInputProps {
   tags: string[];

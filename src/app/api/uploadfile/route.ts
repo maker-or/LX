@@ -13,17 +13,27 @@ const s3Client = new S3Client({
   }
 });
 
-interface UploadRequest {
-  name: string;
-  url: string;
-  // typ: string;
-  userId: object;
-  year: string;
-  branch: string;
-  tags: string;
-  subject:string;
-  type:string
-  
+interface FormDataBody {
+name: string;
+year: string;
+branch: string;
+tags: string;
+subject: string;
+type: string;
+file: File;
+}
+
+interface UploadedFile {
+filename: string;
+fileurl: string;
+userId: string;
+tags: string;
+year: string;
+branch: string;
+type: string;
+subject: string;
+createdAt: Date;
+updatedAt: Date;
 }
 
 const fileUpload = async (file: File, name: string) => {
@@ -55,33 +65,52 @@ export async function POST(req: Request) {
     if (!authUserId) throw new Error("Unauthorized");
 
     const reqData = await req.formData();
-    const extractedData: Record<string, any> = {};
-    for (const [key, value] of reqData.entries()) {
-      extractedData[key] = value;
+    const uploadFile = reqData.get('file');
+
+    if (!uploadFile || !(uploadFile instanceof File)) {
+    throw new Error("File upload is required");
     }
-    
-    const { file, ...body } = extractedData;
+
+    const formData: FormDataBody = {
+    name: (reqData.get('name') ?? '') as string,
+    year: (reqData.get('year') ?? '') as string,
+    branch: (reqData.get('branch') ?? '') as string,
+    tags: (reqData.get('tags') ?? '') as string,
+    subject: (reqData.get('subject') ?? '') as string,
+    type: (reqData.get('type') ?? '') as string,
+    file: uploadFile
+    };
+
+    const { file, ...body } = formData;
     const fileUrl = await fileUpload(file, file.name || "default_title");
 
-    const newRepo = await db.insert(repo).values({
-      filename: body.name,
-      fileurl: fileUrl,
-      userId: authUserId,
-      tags: body.tags,
-      year: body.year,
-      branch: body.branch,
-      type:body.type,
-      subject:body.subject,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    });
+    const uploadedFile: UploadedFile = {
+    filename: body.name,
+    fileurl: fileUrl,
+    userId: authUserId,
+    tags: body.tags,
+    year: body.year,
+    branch: body.branch,
+    type: body.type,
+    subject: body.subject,
+    createdAt: new Date(),
+    updatedAt: new Date()
+    };
 
-    const formData = new FormData();
-    formData.append('url',fileUrl)
-    fetch('http://127.0.0.1:8800',{
-      method:'POST',
-      body: formData
-    })
+    const newRepo = await db.insert(repo).values(uploadedFile);
+
+    const aiFormData = new FormData();
+    aiFormData.append('url', fileUrl);
+
+    try {
+    await fetch('http://127.0.0.1:8800', {
+        method: 'POST',
+        body: aiFormData
+    });
+    } catch (error) {
+    console.error('Error sending file to AI service:', error);
+    // Continue execution even if AI service fails
+    }
 
     return NextResponse.json({ success: true, repo: newRepo });
   } catch (error) {

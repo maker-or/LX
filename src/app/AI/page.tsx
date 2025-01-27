@@ -1,7 +1,7 @@
 'use client';
 import ReactMarkdown from 'react-markdown';
 
-import { type Message, useChat } from 'ai/react';
+import { useChat } from 'ai/react';
 import { Copy, Check, MoveUpRight, Square, Globe, Play } from 'lucide-react';
 import { useEffect, useState, useRef } from "react";
 import { marked } from "marked"; // Importing the marked library
@@ -11,11 +11,14 @@ export default function Page() {
   const [isLoading, setIsLoading] = useState(false);
   const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
   const [lastQuery, setLastQuery] = useState<string>(''); // Store the last query
-  const [searchResults, setSearchResults] = useState<string | null>(null); // Store search results
+interface SearchResponse {
+results: string;
+}
+const [searchResults, setSearchResults] = useState<string | null>(null); // Store search results
 
-  const { messages, input, handleInputChange, handleSubmit, setInput, append } = useChat({
+const { messages, input, handleInputChange, handleSubmit, setInput } = useChat({
     api: '/api/chat',
-    onResponse: (response) => {
+    onResponse: (_response) => {
       setIsLoading(false);
       resetInputField(); // Reset the input field after the response is received
     },
@@ -25,7 +28,6 @@ export default function Page() {
     },
   });
 
-  const [submitted, setSubmitted] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -90,14 +92,13 @@ export default function Page() {
   // Extract links from the content
   const extractLinks = (content: string): string[] => {
     const linkRegex = /https?:\/\/[^\s]+/g;
-    return content.match(linkRegex) || [];
+    return content.match(linkRegex) ?? [];
   };
 
   const onSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!input.trim()) return;
 
-    setSubmitted(true);
     setIsLoading(true);
 
     // Clear search results
@@ -107,7 +108,7 @@ export default function Page() {
     setLastQuery(input);
 
     try {
-      await handleSubmit(event);
+    handleSubmit(event);
     } catch (error) {
       console.error('Error submitting form:', error);
       setIsLoading(false);
@@ -118,7 +119,7 @@ export default function Page() {
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault(); // Prevent default behavior (new line)
-      onSubmit(event); // Submit the form
+    void onSubmit(event); // Submit the form
     } else if (event.key === 'Enter' && event.shiftKey) {
       // Allow new line when Shift + Enter is pressed
       adjustTextareaHeight(); // Adjust textarea height dynamically
@@ -155,10 +156,10 @@ export default function Page() {
       }
 
       // Get the response data
-      const data = await response.json();
+    const data = await response.json() as SearchResponse;
 
       // Store the search results in the state
-      setSearchResults(data);
+    setSearchResults(data.results);
     } catch (error) {
       console.error('Error during web search:', error);
     } finally {
@@ -169,10 +170,6 @@ export default function Page() {
   const handleSearchYouTube = (query: string) => {
     window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`, '_blank');
   };
-
-  function renderMarkdown(searchResults: string): { __html: string | TrustedHTML; } | undefined {
-    throw new Error('Function not implemented.');
-  }
 
   return (
     <main className="flex h-[100svh] w-[100svw] flex-col bg-[#191A1A] items-center justify-center text-[#0c0c0c]">

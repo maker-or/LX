@@ -1,6 +1,6 @@
 import { DuckDuckGoSearch } from '@langchain/community/tools/duckduckgo_search';
 import { groq } from '@ai-sdk/groq';
-import { streamText, smoothStream ,generateText } from 'ai';
+import { generateText } from 'ai';
 import { type ConvertibleMessage } from '~/utils/types';
 import { NextResponse } from 'next/server';
 
@@ -39,7 +39,7 @@ export async function POST(req: Request): Promise<Response> {
     console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
 
     const searchTool = new DuckDuckGoSearch();
-    const searchResults = await searchTool.invoke(query);
+    const searchResults = (await searchTool.invoke(query)) as string;
 
     console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")    
     console.log("the web result is: ", searchResults)
@@ -61,7 +61,7 @@ export async function POST(req: Request): Promise<Response> {
       });
 
       // Ensure the result is properly formatted as JSON
-      const responseData = result.text;
+    const responseData: { results: string } = { results: result.text };
       console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
       console.log("respond is: ", responseData)
       console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")

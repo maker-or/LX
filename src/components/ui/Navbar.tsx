@@ -8,8 +8,11 @@ import { usePathname } from 'next/navigation';
 const Navbar = () => {
   const pathName = usePathname();
 
-  // Function to check if the current path matches the link's path
-  const isActive = (path: string) => pathName.split('/').includes('repo');
+// Function to check if the current path matches the link's path
+const isActive = (path: string) => {
+const currentPath = pathName.split('/')[1] // Get the first segment after /
+return currentPath === path.replace('/', '');
+};
 
   return (
     <nav className="font-serif  p-2 ">
@@ -25,7 +28,7 @@ const Navbar = () => {
           <li className="px-2">
             <Link href="/Draw"  prefetch={true} target="_blank"    >
               <button
-                className={`rounded-full px-4 py-3 ${isActive('Draw') ? 'bg-[#FF5E00] text-[#f7eee3]' : ''
+                className={`rounded-full px-4 py-3 ${isActive('/Draw') ? 'bg-[#FF5E00] text-[#f7eee3]' : ''
                   }`}
               >
                 Draw

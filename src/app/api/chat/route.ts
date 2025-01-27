@@ -1,5 +1,5 @@
 import { groq } from '@ai-sdk/groq'; // Ensure this package is installed
-import { generateText, streamText, smoothStream } from 'ai';
+import { streamText, smoothStream } from 'ai';
 import { Pinecone } from '@pinecone-database/pinecone';
 import { getEmbedding } from '~/utils/embeddings';
 import { type ConvertibleMessage } from '~/utils/types';

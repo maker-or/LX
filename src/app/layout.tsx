@@ -1,13 +1,10 @@
 import "~/styles/globals.css";
 import {
-  ClerkProvider,
-  SignInButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
+ClerkProvider,
+SignInButton,
+SignedIn,
+SignedOut,
 } from "@clerk/nextjs";
-
-import Navbar from "~/components/ui/Navbar";
 
 import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";

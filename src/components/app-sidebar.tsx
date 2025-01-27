@@ -1,16 +1,12 @@
 import * as React from "react";
-import { GalleryVerticalEnd } from "lucide-react";
 import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarHeader,
-  SidebarTrigger,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarInset,
-  SidebarMenuItem,
-  SidebarRail,
+Sidebar,
+SidebarContent,
+SidebarGroup,
+SidebarMenu,
+SidebarMenuButton,
+SidebarMenuItem,
+SidebarRail,
 } from "~/components/ui/sidebar";
 import { UserButton } from '@clerk/nextjs'
 

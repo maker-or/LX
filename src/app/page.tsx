@@ -1,30 +1,22 @@
 "use client";
 
-import { useAuth } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import TagInput from "./components/ui/TagInput";
 import Navbar from "~/components/ui/Navbar";
 
-interface UploadedFile {
-  name: string;
-  url: string;
-  size: number;
-}
 
 export default function HomePage() {
-  const { userId } = useAuth();
-  const [formData, setFormData] = useState({
-    name: "",
-    year: "",
-    branch: "",
-    tags: "",
-    subject: "",
-    type: "",
-  });
-  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
-  const [file, setFile] = useState<undefined | File>(undefined);
-  const [tags, setTags] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+const [formData, setFormData] = useState({
+name: "",
+year: "",
+branch: "",
+tags: "",
+subject: "",
+type: "",
+});
+const [file, setFile] = useState<undefined | File>(undefined);
+const [tags, setTags] = useState<string[]>([]);
+const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => console.log(file), [file]);
 
@@ -38,9 +30,6 @@ export default function HomePage() {
     }));
   };
 
-  const handleUploadComplete = (response: UploadedFile[]) => {
-    setUploadedFiles(response);
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,7 +40,7 @@ export default function HomePage() {
       data.append("branch", formData.branch.toUpperCase());
       data.append("tags", JSON.stringify(tags).toLowerCase());
       data.append("name", formData.name.toLowerCase());
-      data.append("file", file || "");
+    data.append("file", file ?? "");
       data.append("subject", formData.subject.toUpperCase());
       data.append("type", formData.type);
 
@@ -68,7 +57,7 @@ export default function HomePage() {
         type: "",
       });
       setTags([]);
-      setUploadedFiles([]);
+    // Clear any additional state if needed
     } catch (error) {
       console.error("Error updating database:", error);
     } finally {
@@ -179,7 +168,7 @@ export default function HomePage() {
                 type="file"
                 id="file-upload"
                 accept=".pdf"
-                onChange={(e) => setFile(e.target.files?.[0] || undefined)}
+                onChange={(e) => setFile(e.target.files?.[0] ?? undefined)}
                 className="hidden"
               />
             </div>
