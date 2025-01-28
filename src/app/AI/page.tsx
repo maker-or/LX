@@ -197,6 +197,7 @@ const { messages, input, handleInputChange, handleSubmit, setInput } = useChat({
                     </div>
                   ) : (
                     <div className="max-w-2xl text-[1.2rem] tracking-tight text-[#E8E8E6] rounded-xl p-4 relative">
+                      
                       <ReactMarkdown>
                         {m.content}
                       </ReactMarkdown>

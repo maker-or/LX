@@ -1,8 +1,10 @@
-import { groq } from '@ai-sdk/groq'; // Ensure this package is installed
+import { createOpenAI } from '@ai-sdk/openai';
+import Groq from "groq-sdk"; // Ensure this package is installed
 import { streamText, smoothStream } from 'ai';
 import { Pinecone } from '@pinecone-database/pinecone';
 import { getEmbedding } from '~/utils/embeddings';
 import { type ConvertibleMessage } from '~/utils/types';
+
 
 // Define a type for the expected request body structure
 interface RequestBody {
@@ -11,6 +13,9 @@ interface RequestBody {
 
 export async function POST(req: Request): Promise<Response> {
   try {
+    // Validate GROQ API key
+
+
     console.log('Welcome to AI');
 
     // Parse the request JSON with explicit typing
@@ -69,10 +74,24 @@ Please provide a comprehensive and detailed answer to the user's query and cite 
 
     console.log('Final Prompt:', finalPrompt);
 
+    //const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+    // const groq = createGroq({
+    //   baseURL: 'https://api.groq.com/openai/v1',
+    //   GROQ_API_KEY: process.env.GROQ_API_KEY
+
+    // });
+
+
+const groq = createOpenAI({
+  // custom settings, e.g.
+  baseURL:'https://api.groq.com/openai/v1',
+  apiKey: process.env.GROQ_API_KEY ?? '', // strict mode, enable when using the OpenAI API
+});
     // Generate the response using Groq
     try {
-      const result =  streamText({
-        model: groq('llama-3.3-70b-versatile'), // Ensure this model name is valid
+      const result = streamText({
+          model: groq("llama3-70b-8192"),
+      // Use 'key' instead of 'apiKey' for Groq API
         system: `
           You are an expert assistant named SphereAI designed to provide accurate, detailed, and structured answers to user queries. Your task is to answer questions based on the provided context. Follow these guidelines:
       
@@ -99,12 +118,9 @@ Please provide a comprehensive and detailed answer to the user's query and cite 
         prompt: finalPrompt,
         experimental_transform: smoothStream(),
       });
-
-      // Return the response as JSON
-      // console.log("77777777777777777777777777777777777777")
-      // console.log("the result from the chat is ", result.toDataStreamResponse())
-      // console.log("77777777777777777777777777777777777777")
-      return result.toDataStreamResponse(); // Ensure this is called correctly
+      return result.toDataStreamResponse({
+// Removed 'sendReasoning' as it is not a valid property for the response object
+      });
     } catch (error) {
       console.error('Error during streamText:', error);
       return new Response(

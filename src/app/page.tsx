@@ -6,17 +6,17 @@ import Navbar from "~/components/ui/Navbar";
 
 
 export default function HomePage() {
-const [formData, setFormData] = useState({
-name: "",
-year: "",
-branch: "",
-tags: "",
-subject: "",
-type: "",
-});
-const [file, setFile] = useState<undefined | File>(undefined);
-const [tags, setTags] = useState<string[]>([]);
-const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    year: "",
+    branch: "",
+    tags: "",
+    subject: "",
+    type: "",
+  });
+  const [file, setFile] = useState<undefined | File>(undefined);
+  const [tags, setTags] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => console.log(file), [file]);
 
@@ -40,7 +40,7 @@ const [isLoading, setIsLoading] = useState(false);
       data.append("branch", formData.branch.toUpperCase());
       data.append("tags", JSON.stringify(tags).toLowerCase());
       data.append("name", formData.name.toLowerCase());
-    data.append("file", file ?? "");
+      data.append("file", file ?? "");
       data.append("subject", formData.subject.toUpperCase());
       data.append("type", formData.type);
 
@@ -57,7 +57,7 @@ const [isLoading, setIsLoading] = useState(false);
         type: "",
       });
       setTags([]);
-    // Clear any additional state if needed
+      // Clear any additional state if needed
     } catch (error) {
       console.error("Error updating database:", error);
     } finally {
@@ -138,8 +138,8 @@ const [isLoading, setIsLoading] = useState(false);
                 <option value="" disabled>
                   Choose type
                 </option>
-                <option value="Notes">Notes</option>
-                <option value="Question Paper">questionPaper</option>
+                <option value="notes">Notes</option>
+                <option value="questionPapers">question Paper</option>
               </select>
             </div>
             <div>
