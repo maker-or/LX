@@ -47,7 +47,7 @@ export async function POST(req: Request): Promise<Response> {
 
     try {
       const result = await generateText({
-        model: groq('gemma2-9b-it'),
+        model: groq('llama3-70b-8192'),
         system: `
         You are an expert assistant summarizing web search results:
         - Provide a concise, accurate summary
