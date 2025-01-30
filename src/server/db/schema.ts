@@ -4,6 +4,7 @@ import {
   pgTableCreator,
   timestamp,
   varchar,
+  text,
   integer,
 } from "drizzle-orm/pg-core";
 
@@ -19,8 +20,8 @@ export const repo = createTable(
     tags: varchar("tags", { length: 255 }).notNull(),
     year: varchar("year", { length: 255 }).notNull(),
     branch: varchar("branch", { length: 255 }).notNull(),
-    type: varchar("type", { length: 255 }).notNull(), // Add this field
-    subject: varchar("subject", { length: 255 }).notNull(), // Add this field
+    subject: varchar("subject", { length: 255 }).notNull(),
+    type: varchar("type", { length: 255 }).notNull(), // Task description or title                                       // Date when the task is created or due
     createdAt: timestamp("created_at", { withTimezone: true })
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(), // Timestamp for task creation
@@ -30,5 +31,5 @@ export const repo = createTable(
   },
   (repo) => ({
     userIndex: index("repo_idx").on(repo.userId), // Index on userId for faster lookups
-  })
+  }),
 );

@@ -30,6 +30,7 @@
     "@langchain/core": "^0.3.33",
     "@langchain/google-genai": "^0.1.6",
     "@langchain/ollama": "^0.1.4",
+  
     "@neondatabase/serverless": "^0.10.4",
     "@pinecone-database/pinecone": "^4.1.0",
     "@radix-ui/react-dialog": "^1.1.5",

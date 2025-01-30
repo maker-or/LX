@@ -225,7 +225,7 @@ const { messages, input, handleInputChange, handleSubmit, setInput } = useChat({
 
                         <div className='flex items-center justify-center bg-[#4544449d] text-white px-2 rounded-full hover:bg-blue-500'>
                           <button
-                            onClick={() => handleSearchYouTube(m.content)}
+                            onClick={() => handleSearchYouTube(lastQuery)}
                             className="px-1 py-1  text-white rounded-lg "
                           >
                             YouTube
