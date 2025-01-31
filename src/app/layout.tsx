@@ -2,6 +2,7 @@ import "~/styles/globals.css";
 import {
 ClerkProvider,
 SignInButton,
+SignIn,
 SignedIn,
 SignedOut,
 } from "@clerk/nextjs";
@@ -22,11 +23,11 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" className={`${GeistSans.variable}`}>
         <body>
-          <SignedOut>
-            <div className="scroll-behavior: auto; flex h-screen w-screen flex-col items-center justify-center bg-[#191A1A] text-[#0c0c0c]">
-              <SignInButton />
-          </div>
-          </SignedOut>
+        <SignedOut>
+              <div className="scroll-behavior: auto; flex h-screen w-screen flex-col items-center justify-center bg-[#0c0c0c]">
+                <SignIn routing="hash" />
+              </div>
+            </SignedOut>
 
           <SignedIn>
             {children}
