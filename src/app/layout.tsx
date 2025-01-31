@@ -19,12 +19,12 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  return (
+  return ( 
     <ClerkProvider>
       <html lang="en" className={`${GeistSans.variable}`}>
         <body>
         <SignedOut>
-              <div className="scroll-behavior: auto; flex h-screen w-screen flex-col items-center justify-center bg-[#0c0c0c]">
+              <div className="scroll-behavior: auto; flex h-screen w-screen flex-col items-center justify-center bg-[#b1b1b1]">
                 <SignIn routing="hash" />
               </div>
             </SignedOut>

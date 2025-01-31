@@ -303,7 +303,7 @@ const { messages, input, handleInputChange, handleSubmit, setInput } = useChat({
 
                   className="ml-4 p-3 rounded-full bg-[#FF5E00] text-[#f7eee3] font-semibold transition-colors duration-200 hover:bg-[#e05500] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isLoading ? <Square /> : <MoveUpRight />}
+                  {isLoading ? <Square fill='#f7eee3'/>: <MoveUpRight />}
                 </button>
               </div>
             </form>
